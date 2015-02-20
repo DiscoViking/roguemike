@@ -11,11 +11,15 @@ type Entity struct {
 
 type Actor struct {
 	Entity
-	brain Brain
+	Brain
+}
+
+type Action interface {
+	apply(actor *Actor)
 }
 
 type Brain interface {
-	// TODO
+	ChooseAction(g *GameState) (action Action)
 }
 
 type idStore struct {
@@ -33,4 +37,8 @@ func (store *idStore) NextID() (id uint64) {
 	id = store.nextId
 	store.nextId++
 	return
+}
+
+func (actor *Actor) Do(action Action) {
+	action.apply(actor)
 }
