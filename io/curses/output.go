@@ -4,7 +4,6 @@ package curses
 
 import (
 	"code.google.com/p/goncurses"
-	"github.com/discoviking/roguemike"
 	"github.com/discoviking/roguemike/io"
 )
 
@@ -24,7 +23,7 @@ func New() error {
 
 	go func() {
 		for s := range Input {
-			Output(s)
+			output(s)
 		}
 	}()
 
@@ -51,6 +50,6 @@ func refresh() {
 	screen.Refresh()
 }
 
-func draw(e EntityData) {
+func draw(e *io.EntityData) {
 	screen.MoveAddChar(e.Y, e.X, 'X')
 }
