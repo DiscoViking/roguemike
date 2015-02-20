@@ -52,5 +52,5 @@ func refresh() {
 }
 
 func draw(e EntityData) {
-	screen.MoveAddChar(e.Position.Y, e.Position.X, 'X')
+	screen.MoveAddChar(e.Y, e.X, 'X')
 }
