@@ -31,11 +31,11 @@ func New() error {
 	return nil
 }
 
-func TermOutput() {
+func Term() {
 	goncurses.End()
 }
 
-func Output(u *io.UpdateBundle) {
+func output(u *io.UpdateBundle) {
 	clearscreen()
 	for _, e := range u.Entities {
 		draw(e)
