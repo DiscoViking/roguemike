@@ -4,9 +4,12 @@ import "sync"
 
 var globalIdStore idStore
 
+type Type uint8
+
 type Entity struct {
 	Position Coord
 	ID       uint64
+	Type     Type
 }
 
 type Actor struct {
