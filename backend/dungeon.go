@@ -16,8 +16,11 @@ type Coord struct {
 	Y int
 }
 
+func NewGameManager() GameManager {
+	return &gameManager{}
+}
+
 type gameManager struct {
-	ioChan <-chan *GameState
 }
 
 func (mgr *gameManager) Tick(g *GameState) {
