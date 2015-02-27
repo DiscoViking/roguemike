@@ -1,7 +1,7 @@
 package backend
 
 type GameManager interface {
-	Tick(g *GameState)
+	Tick()
 	GetState() (g *GameState)
 }
 
@@ -17,19 +17,25 @@ type Coord struct {
 }
 
 func NewGameManager() GameManager {
-	return &gameManager{}
+	mgr := gameManager{}
+	mgr.state = &GameState{}
+	mgr.state.Entities = make([]*Entity, 0)
+	mgr.state.Actors = make([]Actor, 0)
+	mgr.state.Player = NewPlayer()
+	return &mgr
 }
 
 type gameManager struct {
+	state *GameState
 }
 
-func (mgr *gameManager) Tick(g *GameState) {
-	for _, actor := range g.Actors {
-		action := actor.ChooseAction(g)
+func (mgr *gameManager) Tick() {
+	for _, actor := range mgr.state.Actors {
+		action := actor.ChooseAction(mgr.state)
 		actor.Do(action)
 	}
 }
 
 func (mgr *gameManager) GetState() (g *GameState) {
-	return g
+	return mgr.state
 }
