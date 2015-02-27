@@ -2,6 +2,7 @@ package backend
 
 type Player struct {
 	Actor
+	input <-chan Action
 }
 
 func NewPlayer() (player *Player) {
@@ -10,7 +11,10 @@ func NewPlayer() (player *Player) {
 	return player
 }
 
+func (player *Player) SetInputChan(input <-chan Action) {
+	player.input = input
+}
+
 func (player *Player) ChooseAction(g *GameState) (action Action) {
-	// TODO
-	return nil
+	return <-player.input
 }

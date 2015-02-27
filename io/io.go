@@ -29,11 +29,20 @@ func GetEntityData(entity *backend.Entity) (data *EntityData) {
 }
 
 type Manager struct {
-	ioChan chan<- *UpdateBundle
+	output chan<- *UpdateBundle
+	input  chan<- backend.Action
 }
 
-func (mgr *Manager) SetIOChan(ioChan chan<- *UpdateBundle) {
-	mgr.ioChan = ioChan
+func (mgr *Manager) SetOutput(output chan<- *UpdateBundle) {
+	mgr.output = output
+}
+
+func (mgr *Manager) SetInput(input chan<- backend.Action) {
+	mgr.input = input
+}
+
+func (mgr *Manager) SendAction(action backend.Action) {
+	mgr.input <- action
 }
 
 func (mgr *Manager) Update(g backend.GameManager) {
@@ -45,5 +54,5 @@ func (mgr *Manager) Update(g backend.GameManager) {
 		bundle.Entities = append(bundle.Entities, GetEntityData(entity))
 	}
 
-	mgr.ioChan <- &bundle
+	mgr.output <- &bundle
 }
