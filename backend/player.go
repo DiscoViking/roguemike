@@ -1,7 +1,7 @@
 package backend
 
 type Player struct {
-	Entity
+	Actor
 }
 
 func NewPlayer() (player *Player) {

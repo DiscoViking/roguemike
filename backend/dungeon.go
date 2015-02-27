@@ -7,7 +7,7 @@ type GameManager interface {
 
 type GameState struct {
 	Entities []*Entity
-	Actors   []Actor
+	Actors   []*Actor
 	Player   *Player
 }
 
@@ -19,9 +19,9 @@ type Coord struct {
 func NewGameManager() GameManager {
 	mgr := gameManager{}
 	mgr.state = &GameState{}
-	mgr.state.Entities = make([]*Entity, 0)
-	mgr.state.Actors = make([]Actor, 0)
 	mgr.state.Player = NewPlayer()
+	mgr.state.Entities = []*Entity{&mgr.state.Player.Entity}
+	mgr.state.Actors = []*Actor{&mgr.state.Player.Actor}
 	return &mgr
 }
 
