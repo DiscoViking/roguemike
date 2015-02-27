@@ -28,15 +28,15 @@ func GetEntityData(entity *backend.Entity) (data *EntityData) {
 	return data
 }
 
-type ioManager struct {
+type Manager struct {
 	ioChan chan<- *UpdateBundle
 }
 
-func (mgr *ioManager) SetIOChan(ioChan chan<- *UpdateBundle) {
+func (mgr *Manager) SetIOChan(ioChan chan<- *UpdateBundle) {
 	mgr.ioChan = ioChan
 }
 
-func (mgr *ioManager) Update(g backend.GameManager) {
+func (mgr *Manager) Update(g backend.GameManager) {
 	bundle := UpdateBundle{}
 	gameState := g.GetState()
 	bundle.Player = GetPlayerData(gameState.Player)

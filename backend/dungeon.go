@@ -1,10 +1,5 @@
 package backend
 
-type IOManager interface {
-	Update(g *GameState)
-	SetIOChan(c <-chan *GameState)
-}
-
 type GameManager interface {
 	Tick(g *GameState)
 	GetState() (g *GameState)
