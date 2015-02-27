@@ -10,7 +10,7 @@ import (
 var screen *goncurses.Window
 var Input chan *io.UpdateBundle
 
-func New() error {
+func Init() error {
 	s, err := goncurses.Init()
 	screen = s
 	if err != nil {
