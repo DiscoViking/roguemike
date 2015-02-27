@@ -1,19 +1,17 @@
 package backend
 
+import "github.com/discoviking/roguemike/io"
+
 type GameManager interface {
 	Tick()
 	GetState() (g *GameState)
+	Data() *io.UpdateBundle
 }
 
 type GameState struct {
 	Entities []*Entity
 	Actors   []*Actor
 	Player   *Player
-}
-
-type Coord struct {
-	X int
-	Y int
 }
 
 func NewGameManager() GameManager {
@@ -38,4 +36,15 @@ func (mgr *gameManager) Tick() {
 
 func (mgr *gameManager) GetState() (g *GameState) {
 	return mgr.state
+}
+
+func (mgr *gameManager) Data() (bundle *io.UpdateBundle) {
+	bundle = &io.UpdateBundle{}
+	bundle.Player = mgr.state.Player.Data()
+	bundle.Entities = []*io.EntityData{}
+	for _, entity := range mgr.state.Entities {
+		bundle.Entities = append(bundle.Entities, entity.Data())
+	}
+
+	return bundle
 }

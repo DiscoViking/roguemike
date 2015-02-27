@@ -1,15 +1,18 @@
 package backend
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/discoviking/roguemike/common"
+	"github.com/discoviking/roguemike/io"
+)
 
 var globalIdStore idStore
 
-type Type uint8
-
 type Entity struct {
-	Coord
+	common.Coords
 	ID   uint64
-	Type Type
+	Type io.EntityType
 }
 
 type Actor struct {
@@ -28,6 +31,15 @@ type idStore struct {
 
 func (entity *Entity) Init() {
 	entity.ID = globalIdStore.NextID()
+}
+
+func (entity *Entity) Data() *io.EntityData {
+	data := &io.EntityData{}
+	data.X = entity.X
+	data.Y = entity.Y
+	data.Type = entity.Type
+
+	return data
 }
 
 func (store *idStore) NextID() (id uint64) {

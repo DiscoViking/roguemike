@@ -1,7 +1,7 @@
 package backend
 
 const (
-	TypeWall Type = iota
+	TypeWall io.EntityType = iota
 	TypePlayer
 	TypeMonster
 )
