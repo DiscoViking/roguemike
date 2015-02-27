@@ -17,10 +17,6 @@ type Actor struct {
 	Brain
 }
 
-type Action interface {
-	apply(actor *Actor)
-}
-
 type Brain interface {
 	ChooseAction(g *GameState) (action Action)
 }
