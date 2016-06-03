@@ -3,8 +3,8 @@ package curses
 // Handles all output.
 
 import (
-	"code.google.com/p/goncurses"
 	"github.com/discoviking/roguemike/io"
+	"github.com/rthornton128/goncurses"
 )
 
 var screen *goncurses.Window
