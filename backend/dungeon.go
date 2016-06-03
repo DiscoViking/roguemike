@@ -1,6 +1,10 @@
 package backend
 
-import "github.com/discoviking/roguemike/io"
+import (
+	"log"
+
+	"github.com/discoviking/roguemike/io"
+)
 
 type GameManager interface {
 	Tick()
@@ -11,7 +15,7 @@ type GameManager interface {
 type GameState struct {
 	Entities []*Entity
 	Actors   []*Actor
-	Player   *Player
+	Player   *Actor
 }
 
 func NewGameManager() GameManager {
@@ -19,7 +23,7 @@ func NewGameManager() GameManager {
 	mgr.state = &GameState{}
 	mgr.state.Player = NewPlayer()
 	mgr.state.Entities = []*Entity{&mgr.state.Player.Entity}
-	mgr.state.Actors = []*Actor{&mgr.state.Player.Actor}
+	mgr.state.Actors = []*Actor{mgr.state.Player}
 	return &mgr
 }
 
@@ -40,9 +44,9 @@ func (mgr *gameManager) GetState() (g *GameState) {
 
 func (mgr *gameManager) Data() (bundle *io.UpdateBundle) {
 	bundle = &io.UpdateBundle{}
-	bundle.Player = mgr.state.Player.Data()
 	bundle.Entities = []*io.EntityData{}
 	for _, entity := range mgr.state.Entities {
+		log.Printf("Entity %#v", entity)
 		bundle.Entities = append(bundle.Entities, entity.Data())
 	}
 

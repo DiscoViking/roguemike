@@ -1,26 +1,22 @@
 package backend
 
-import "github.com/discoviking/roguemike/io"
-
-type Player struct {
-	Actor
+type InputBrain struct {
 	input <-chan Action
 }
 
-func NewPlayer() (player *Player) {
-	player = new(Player)
+func NewPlayer() (player *Actor) {
+	player = &Actor{}
+	player.X = 10
+	player.Y = 10
 	player.Type = TypePlayer
+	player.Brain = &InputBrain{}
 	return player
 }
 
-func (player *Player) Data() *io.PlayerData {
-	return &io.PlayerData{}
+func (b *InputBrain) SetInputChan(input <-chan Action) {
+	b.input = input
 }
 
-func (player *Player) SetInputChan(input <-chan Action) {
-	player.input = input
-}
-
-func (player *Player) ChooseAction(g *GameState) (action Action) {
-	return <-player.input
+func (b *InputBrain) ChooseAction(g *GameState) (action Action) {
+	return <-b.input
 }

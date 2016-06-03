@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+	"os"
 	"time"
 
 	"github.com/discoviking/roguemike/backend"
@@ -9,18 +11,26 @@ import (
 )
 
 func main() {
+	logFile, err := os.Create("roguemike.log")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logFile.Close()
+	log.SetOutput(logFile)
+
 	game := backend.NewGameManager()
 	iomanager := &io.Manager{}
 	curses.Init()
 	defer curses.Term()
-	iomanager.SetIOChan(curses.Input)
+	iomanager.SetOutput(curses.Input)
 
 	t := time.NewTicker(1 * time.Second)
 	count := 0
 
 	for _ = range t.C {
-		game.Tick()
-		iomanager.Update(game)
+		log.Print("Updating IO")
+		//game.Tick()
+		iomanager.Update(game.Data())
 		count++
 		if count == 5 {
 			break

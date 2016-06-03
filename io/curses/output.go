@@ -3,6 +3,8 @@ package curses
 // Handles all output.
 
 import (
+	"log"
+
 	"github.com/discoviking/roguemike/io"
 	"github.com/rthornton128/goncurses"
 )
@@ -20,7 +22,9 @@ func Init() error {
 	goncurses.Raw(true)
 	goncurses.Echo(false)
 	goncurses.Cursor(0)
+	Input = make(chan *io.UpdateBundle, 1)
 
+	log.Print("Starting output goroutine")
 	go func() {
 		for s := range Input {
 			output(s)
@@ -35,8 +39,10 @@ func Term() {
 }
 
 func output(u *io.UpdateBundle) {
+	log.Print("Drawing update...")
 	clearscreen()
 	for _, e := range u.Entities {
+		log.Printf("Drawing entity %#v", e)
 		draw(e)
 	}
 	refresh()
