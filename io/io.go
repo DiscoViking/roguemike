@@ -9,10 +9,9 @@ type UpdateBundle struct {
 
 type PlayerData struct{}
 
-type EntityType uint32
 
 type EntityData struct {
-	Type EntityType
+	Type common.EntityType
 	common.Coords
 }
 
