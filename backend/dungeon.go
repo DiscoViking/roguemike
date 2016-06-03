@@ -2,14 +2,13 @@ package backend
 
 import (
 	"log"
-
-	"github.com/discoviking/roguemike/io"
+    "github.com/discoviking/roguemike/api"
 )
 
 type GameManager interface {
 	Tick()
 	GetState() (g *GameState)
-	Data() *io.UpdateBundle
+	Data() *api.UpdateBundle
 }
 
 type GameState struct {
@@ -42,9 +41,9 @@ func (mgr *gameManager) GetState() (g *GameState) {
 	return mgr.state
 }
 
-func (mgr *gameManager) Data() (bundle *io.UpdateBundle) {
-	bundle = &io.UpdateBundle{}
-	bundle.Entities = []*io.EntityData{}
+func (mgr *gameManager) Data() (bundle *api.UpdateBundle) {
+	bundle = &api.UpdateBundle{}
+	bundle.Entities = []*api.EntityData{}
 	for _, entity := range mgr.state.Entities {
 		log.Printf("Entity %#v", entity)
 		bundle.Entities = append(bundle.Entities, entity.Data())
@@ -52,3 +51,4 @@ func (mgr *gameManager) Data() (bundle *io.UpdateBundle) {
 
 	return bundle
 }
+

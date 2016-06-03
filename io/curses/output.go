@@ -5,12 +5,12 @@ package curses
 import (
 	"log"
 
-	"github.com/discoviking/roguemike/io"
+	"github.com/discoviking/roguemike/api"
 	"github.com/rthornton128/goncurses"
 )
 
 var screen *goncurses.Window
-var Input chan *io.UpdateBundle
+var Input chan *api.UpdateBundle
 
 func Init() error {
 	s, err := goncurses.Init()
@@ -22,7 +22,7 @@ func Init() error {
 	goncurses.Raw(true)
 	goncurses.Echo(false)
 	goncurses.Cursor(0)
-	Input = make(chan *io.UpdateBundle, 1)
+	Input = make(chan *api.UpdateBundle, 1)
 
 	log.Print("Starting output goroutine")
 	go func() {
@@ -38,7 +38,7 @@ func Term() {
 	goncurses.End()
 }
 
-func output(u *io.UpdateBundle) {
+func output(u *api.UpdateBundle) {
 	log.Print("Drawing update...")
 	clearscreen()
 	for _, e := range u.Entities {
@@ -56,6 +56,6 @@ func refresh() {
 	screen.Refresh()
 }
 
-func draw(e *io.EntityData) {
+func draw(e *api.EntityData) {
 	screen.MoveAddChar(e.Y, e.X, 'X')
 }
