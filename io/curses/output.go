@@ -57,5 +57,12 @@ func refresh() {
 }
 
 func draw(e *api.EntityData) {
-	screen.MoveAddChar(e.Y, e.X, 'X')
+    switch e.Type {
+    case api.TypeWall:
+        screen.MoveAddChar(e.Y, e.X, 'X')
+    case api.TypePlayer:
+        screen.MoveAddChar(e.Y, e.X, '*')
+    case api.TypeMonster:
+        screen.MoveAddChar(e.Y, e.X, '@')
+    }
 }
