@@ -36,7 +36,7 @@ type gameManager struct {
 func (mgr *gameManager) Tick() {
 	for _, actor := range mgr.state.Actors {
 		action := actor.ChooseAction(mgr.state)
-		actor.Do(action)
+		action.apply(actor, mgr.state)
 	}
 
     mgr.pushUpdate()
@@ -63,3 +63,12 @@ func (mgr *gameManager) pushUpdate() {
     mgr.eventsManager.Publish(update)
 }
 
+func (state *GameState) IsTraversable(position api.Coords) bool {
+    for _, entity := range state.Entities {
+        if (entity.X == position.X && entity.Y == position.Y) {
+            return false
+        }
+    }
+
+    return true
+}

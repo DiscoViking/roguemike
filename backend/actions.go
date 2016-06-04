@@ -1,7 +1,9 @@
 package backend
 
+import "github.com/discoviking/roguemike/api"
+
 type Action interface {
-	apply(actor *Actor)
+	apply(actor *Actor, state *GameState)
 }
 
 // Move the actor DX pixels right, and DY pixels down.
@@ -10,7 +12,9 @@ type ActionMove struct {
 	DY int
 }
 
-func (action *ActionMove) apply(actor *Actor) {
-	actor.X += action.DX
-	actor.Y += action.DY
+func (action *ActionMove) apply(actor *Actor, state *GameState) {
+    if (state.IsTraversable(api.Coords{actor.X + action.DX, actor.Y + action.DY})) {
+        actor.X += action.DX
+        actor.Y += action.DY
+    }
 }

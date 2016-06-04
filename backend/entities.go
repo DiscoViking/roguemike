@@ -48,7 +48,3 @@ func (store *idStore) NextID() (id uint64) {
 	store.nextId++
 	return
 }
-
-func (actor *Actor) Do(action Action) {
-	action.apply(actor)
-}
