@@ -2,26 +2,33 @@ package api
 
 import "github.com/discoviking/roguemike/events"
 
+// Event Types
+const (
+	EventWorldUpdate events.Type = iota
+	EventMoveIntent
+	EventQuit
+)
+
 type WorldUpdate struct {
 	Player   PlayerData
 	Entities []EntityData
 }
 
 func (u WorldUpdate) Type() events.Type {
-    return events.Type("worldupdate")
+	return EventWorldUpdate
 }
 
 type MoveIntent struct {
-    X int
-    Y int
+	X int
+	Y int
 }
 
 func (i MoveIntent) Type() events.Type {
-    return events.Type("moveintent")
+	return EventMoveIntent
 }
 
-type Quit struct {}
+type Quit struct{}
 
 func (i Quit) Type() events.Type {
-    return events.Type("quit")
+	return EventQuit
 }

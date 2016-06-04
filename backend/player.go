@@ -23,7 +23,7 @@ func (b *InputBrain) ChooseAction(g *GameState) (action Action) {
 
 func (b *InputBrain) makeSubscriptions(eventManager *events.Manager) {
 	eventManager.Subscribe(
-		events.Type("moveintent"),
+		events.Type(api.EventMoveIntent),
 		events.Handler(func(e events.Event) {
 			move := e.(api.MoveIntent)
 			b.input <- &ActionMove{DX: move.X, DY: move.Y}

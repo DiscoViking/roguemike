@@ -6,7 +6,7 @@ import (
 
 var global = NewManager()
 
-type Type string
+type Type int
 
 type Event interface {
 	Type() Type
