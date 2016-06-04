@@ -9,6 +9,7 @@ type GameManager interface {
 	Tick()
 	GetState() (g *GameState)
 	Data() *api.UpdateBundle
+    SetInput (input <-chan Action)
 }
 
 type GameState struct {
@@ -28,6 +29,11 @@ func NewGameManager() GameManager {
 
 type gameManager struct {
 	state *GameState
+}
+
+func (mgr *gameManager) SetInput(input <-chan Action) {
+    // TODO: Refactor this to avoid the type assertion.
+    mgr.state.Player.Brain.(*InputBrain).SetInputChan(input)
 }
 
 func (mgr *gameManager) Tick() {

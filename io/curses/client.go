@@ -11,6 +11,7 @@ import (
 
 var screen *goncurses.Window
 var Input chan *api.UpdateBundle
+var Output chan *api.ClientAction
 
 func Init() error {
 	s, err := goncurses.Init()
@@ -23,6 +24,7 @@ func Init() error {
 	goncurses.Echo(false)
 	goncurses.Cursor(0)
 	Input = make(chan *api.UpdateBundle, 1)
+	Output = make(chan *api.ClientAction, 1)
 
 	log.Print("Starting output goroutine")
 	go func() {
@@ -30,6 +32,8 @@ func Init() error {
 			output(s)
 		}
 	}()
+
+    go handleInput()
 
 	return nil
 }
@@ -46,6 +50,27 @@ func output(u *api.UpdateBundle) {
 		draw(e)
 	}
 	refresh()
+}
+
+func handleInput() {
+    for {
+        var action api.ClientAction = nil;
+        c := screen.GetChar()
+        switch c {
+        case 'w':
+            action = api.MoveAction{X:0, Y:-1}
+        case 'a':
+            action = api.MoveAction{X:-1, Y:0}
+        case 'd':
+            action = api.MoveAction{X:1, Y:0}
+        case 's':
+            action = api.MoveAction{X:0, Y:1}
+        }
+
+        if (action != nil) {
+            Output <- &action
+        }
+    }
 }
 
 func clearscreen() {

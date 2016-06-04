@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"time"
 
 	"github.com/discoviking/roguemike/backend"
 	"github.com/discoviking/roguemike/io"
@@ -20,20 +19,18 @@ func main() {
 
 	game := backend.NewGameManager()
 	iomanager := &io.Manager{}
+	iomanager.Init()
 	curses.Init()
 	defer curses.Term()
+
 	iomanager.SetOutput(curses.Input)
+	game.SetInput(iomanager.GetPlayerInput())
 
-	t := time.NewTicker(1 * time.Second)
-	count := 0
-
-	for _ = range t.C {
+	iomanager.Update(game.Data())
+	for action := range curses.Output {
+		iomanager.HandleInput(*action)
 		log.Print("Updating IO")
-		//game.Tick()
+		game.Tick()
 		iomanager.Update(game.Data())
-		count++
-		if count == 5 {
-			break
-		}
 	}
 }

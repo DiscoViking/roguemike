@@ -20,5 +20,9 @@ func (b *InputBrain) SetInputChan(input <-chan Action) {
 }
 
 func (b *InputBrain) ChooseAction(g *GameState) (action Action) {
-	return <-b.input
+    if (b.input != nil) {
+        return <-b.input
+    } else {
+        panic("No input method defined for player!")
+    }
 }
