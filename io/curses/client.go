@@ -6,14 +6,13 @@ import (
 	"log"
 
 	"github.com/discoviking/roguemike/api"
+	"github.com/discoviking/roguemike/events"
 	"github.com/rthornton128/goncurses"
 )
 
 var screen *goncurses.Window
-var Input chan *api.UpdateBundle
-var Output chan *api.ClientAction
 
-func Init() error {
+func Init(eventManager *events.Manager) error {
 	s, err := goncurses.Init()
 	screen = s
 	if err != nil {
@@ -25,17 +24,8 @@ func Init() error {
 	goncurses.Cursor(0)
     screen.Keypad(true)
 
-	Input = make(chan *api.UpdateBundle, 1)
-	Output = make(chan *api.ClientAction, 1)
-
-	log.Print("Starting output goroutine")
-	go func() {
-		for s := range Input {
-			output(s)
-		}
-	}()
-
-    go handleInput()
+    createEventSubscriptions(eventManager)
+    go handleInput(eventManager)
 
 	return nil
 }
@@ -44,35 +34,39 @@ func Term() {
 	goncurses.End()
 }
 
-func output(u *api.UpdateBundle) {
+func output(u *api.WorldUpdate) {
 	log.Print("Drawing update...")
 	clearscreen()
 	for _, e := range u.Entities {
-		log.Printf("Drawing entity %#v", e)
-		draw(e)
+		log.Printf("Drawing entity %#v", &e)
+		draw(&e)
 	}
 	refresh()
 }
 
-func handleInput() {
+func createEventSubscriptions(eventManager *events.Manager) {
+    eventManager.Subscribe(
+        events.Type("worldupdate"),
+        events.Handler(func(e events.Event) {
+            update := e.(api.WorldUpdate)
+            output(&update)
+        }))
+}
+
+func handleInput(eventManager *events.Manager) {
     for {
-        var action api.ClientAction = nil;
         c := screen.GetChar()
         switch c {
         case 'w', goncurses.KEY_UP:
-            action = api.MoveAction{X:0, Y:-1}
+            eventManager.Publish(api.MoveIntent{X:0, Y:-1})
         case 'a', goncurses.KEY_LEFT:
-            action = api.MoveAction{X:-1, Y:0}
+            eventManager.Publish(api.MoveIntent{X:-1, Y:0})
         case 'd', goncurses.KEY_RIGHT:
-            action = api.MoveAction{X:1, Y:0}
+            eventManager.Publish(api.MoveIntent{X:1, Y:0})
         case 's', goncurses.KEY_DOWN:
-            action = api.MoveAction{X:0, Y:1}
+            eventManager.Publish(api.MoveIntent{X:0, Y:1})
         case 'q':
-            action = api.QuitAction{}
-        }
-
-        if (action != nil) {
-            Output <- &action
+            eventManager.Publish(api.Quit{})
         }
     }
 }

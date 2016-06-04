@@ -3,13 +3,13 @@ package backend
 import (
 	"log"
     "github.com/discoviking/roguemike/api"
+    "github.com/discoviking/roguemike/events"
 )
 
 type GameManager interface {
 	Tick()
+    Loop()
 	GetState() (g *GameState)
-	Data() *api.UpdateBundle
-    SetInput (input <-chan Action)
 }
 
 type GameState struct {
@@ -18,22 +18,19 @@ type GameState struct {
 	Player   *Actor
 }
 
-func NewGameManager() GameManager {
+func NewGameManager(eventsManager *events.Manager) GameManager {
 	mgr := gameManager{}
 	mgr.state = &GameState{}
-	mgr.state.Player = NewPlayer()
+	mgr.state.Player = NewPlayer(eventsManager)
 	mgr.state.Entities = []*Entity{&mgr.state.Player.Entity}
 	mgr.state.Actors = []*Actor{mgr.state.Player}
+    mgr.eventsManager = eventsManager
 	return &mgr
 }
 
 type gameManager struct {
 	state *GameState
-}
-
-func (mgr *gameManager) SetInput(input <-chan Action) {
-    // TODO: Refactor this to avoid the type assertion.
-    mgr.state.Player.Brain.(*InputBrain).SetInputChan(input)
+    eventsManager *events.Manager
 }
 
 func (mgr *gameManager) Tick() {
@@ -41,20 +38,28 @@ func (mgr *gameManager) Tick() {
 		action := actor.ChooseAction(mgr.state)
 		actor.Do(action)
 	}
+
+    mgr.pushUpdate()
+}
+
+func (mgr *gameManager) Loop() {
+    for {
+        mgr.Tick()
+    }
 }
 
 func (mgr *gameManager) GetState() (g *GameState) {
 	return mgr.state
 }
 
-func (mgr *gameManager) Data() (bundle *api.UpdateBundle) {
-	bundle = &api.UpdateBundle{}
-	bundle.Entities = []*api.EntityData{}
+func (mgr *gameManager) pushUpdate() {
+    update := api.WorldUpdate{}
+	update.Entities = []api.EntityData{}
 	for _, entity := range mgr.state.Entities {
 		log.Printf("Entity %#v", entity)
-		bundle.Entities = append(bundle.Entities, entity.Data())
+        update.Entities = append(update.Entities, *entity.Data())
 	}
 
-	return bundle
+    mgr.eventsManager.Publish(update)
 }
 

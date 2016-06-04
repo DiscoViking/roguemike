@@ -4,9 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/discoviking/roguemike/api"
 	"github.com/discoviking/roguemike/backend"
-	"github.com/discoviking/roguemike/io"
+	"github.com/discoviking/roguemike/events"
 	"github.com/discoviking/roguemike/io/curses"
 )
 
@@ -18,25 +17,20 @@ func main() {
 	defer logFile.Close()
 	log.SetOutput(logFile)
 
-	game := backend.NewGameManager()
-	iomanager := &io.Manager{}
-	iomanager.Init()
-	curses.Init()
+    eventsManager := events.NewManager()
+	game := backend.NewGameManager(eventsManager)
+
+    // Begin frontend loop.
+	curses.Init(eventsManager)
 	defer curses.Term()
 
-	iomanager.SetOutput(curses.Input)
-	game.SetInput(iomanager.GetPlayerInput())
+    // Begin backend loop.
+    go game.Loop()
 
-	iomanager.Update(game.Data())
-	for action := range curses.Output {
-        _, shouldQuit := (*action).(api.QuitAction)
-        if (shouldQuit) {
-            break
-        }
-
-		iomanager.HandleInput(*action)
-		log.Print("Updating IO")
-		game.Tick()
-		iomanager.Update(game.Data())
-	}
+    // Block until a 'quit' event is sent.
+    quit := make(chan bool, 1)
+    eventsManager.Subscribe("quit", func(e events.Event) {
+        quit <- true
+    })
+    <-quit
 }
