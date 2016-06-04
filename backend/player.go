@@ -13,19 +13,19 @@ func NewPlayer(eventManager *events.Manager) (player *Actor) {
 	player.Y = 10
 	player.Type = api.TypePlayer
 	player.Brain = &InputBrain{make(chan Action, 1)}
-    player.Brain.(*InputBrain).makeSubscriptions(eventManager)
+	player.Brain.(*InputBrain).makeSubscriptions(eventManager)
 	return player
 }
 
 func (b *InputBrain) ChooseAction(g *GameState) (action Action) {
-    return <-b.input
+	return <-b.input
 }
 
 func (b *InputBrain) makeSubscriptions(eventManager *events.Manager) {
-    eventManager.Subscribe(
-        events.Type("moveIntent"),
-        events.Handler(func(e events.Event) {
-            move := e.(api.MoveIntent)
-            b.input <- &ActionMove{DX:move.X, DY:move.Y}
-        }))
+	eventManager.Subscribe(
+		events.Type("moveintent"),
+		events.Handler(func(e events.Event) {
+			move := e.(api.MoveIntent)
+			b.input <- &ActionMove{DX: move.X, DY: move.Y}
+		}))
 }

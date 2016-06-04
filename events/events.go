@@ -1,5 +1,9 @@
 package events
 
+import (
+	"log"
+)
+
 var global = NewManager()
 
 type Type string
@@ -26,12 +30,15 @@ func (m *Manager) Subscribe(t Type, h Handler) {
 		m.subscriptions[t] = make([]Handler, 0, 1)
 	}
 
+	log.Printf("New subsriber for event type %v.", t)
 	m.subscriptions[t] = append(m.subscriptions[t], h)
 }
 
 func (m *Manager) Publish(e Event) {
 	t := e.Type()
+	log.Printf("New event of type %v", t)
 	if subscribers, ok := m.subscriptions[t]; ok {
+		log.Printf("Publishing %v event to %v subscribers", t, len(subscribers))
 		for _, s := range subscribers {
 			s(e)
 		}
