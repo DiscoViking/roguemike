@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/discoviking/roguemike/api"
 	"github.com/discoviking/roguemike/backend"
 	"github.com/discoviking/roguemike/io"
 	"github.com/discoviking/roguemike/io/curses"
@@ -28,6 +29,11 @@ func main() {
 
 	iomanager.Update(game.Data())
 	for action := range curses.Output {
+        _, shouldQuit := (*action).(api.QuitAction)
+        if (shouldQuit) {
+            break
+        }
+
 		iomanager.HandleInput(*action)
 		log.Print("Updating IO")
 		game.Tick()

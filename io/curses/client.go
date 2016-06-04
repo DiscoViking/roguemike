@@ -23,6 +23,8 @@ func Init() error {
 	goncurses.Raw(true)
 	goncurses.Echo(false)
 	goncurses.Cursor(0)
+    screen.Keypad(true)
+
 	Input = make(chan *api.UpdateBundle, 1)
 	Output = make(chan *api.ClientAction, 1)
 
@@ -57,14 +59,16 @@ func handleInput() {
         var action api.ClientAction = nil;
         c := screen.GetChar()
         switch c {
-        case 'w':
+        case 'w', goncurses.KEY_UP:
             action = api.MoveAction{X:0, Y:-1}
-        case 'a':
+        case 'a', goncurses.KEY_LEFT:
             action = api.MoveAction{X:-1, Y:0}
-        case 'd':
+        case 'd', goncurses.KEY_RIGHT:
             action = api.MoveAction{X:1, Y:0}
-        case 's':
+        case 's', goncurses.KEY_DOWN:
             action = api.MoveAction{X:0, Y:1}
+        case 'q':
+            action = api.QuitAction{}
         }
 
         if (action != nil) {

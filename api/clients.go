@@ -10,3 +10,7 @@ type MoveAction struct {
 }
 
 func (action MoveAction) _implementsClientAction(){}
+
+type QuitAction struct{}
+
+func (action QuitAction) _implementsClientAction(){}
