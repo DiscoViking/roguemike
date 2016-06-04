@@ -1,6 +1,6 @@
 package curses
 
-// Handles all output.
+// Implementation of a RogueMike game client in curses.
 
 import (
 	"log"
