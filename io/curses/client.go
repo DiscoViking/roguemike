@@ -11,6 +11,7 @@ import (
 )
 
 var screen *goncurses.Window
+var entityHistory map[api.Coords]api.EntityData
 
 func Init(eventManager *events.Manager) error {
 	s, err := goncurses.Init()
@@ -27,6 +28,8 @@ func Init(eventManager *events.Manager) error {
 	createEventSubscriptions(eventManager)
 	go handleInput(eventManager)
 
+	entityHistory = map[api.Coords]api.EntityData{}
+
 	return nil
 }
 
@@ -37,9 +40,16 @@ func Term() {
 func output(u *api.WorldUpdate) {
 	log.Print("Drawing update...")
 	clearscreen()
+	for _, e := range entityHistory {
+		log.Printf("Drawing historic entity %#v", &e)
+		draw(&e, true)
+	}
 	for _, e := range u.Entities {
 		log.Printf("Drawing entity %#v", &e)
-		draw(&e)
+		draw(&e, false)
+		if e.Type == api.TypeWall {
+			entityHistory[e.Coords] = e
+		}
 	}
 	refresh()
 }
@@ -79,10 +89,14 @@ func refresh() {
 	screen.Refresh()
 }
 
-func draw(e *api.EntityData) {
+func draw(e *api.EntityData, history bool) {
+	mod := goncurses.A_BOLD
+	if history {
+		mod = 0
+	}
 	switch e.Type {
 	case api.TypeWall:
-		screen.MoveAddChar(e.Y, e.X, 'X')
+		screen.MoveAddChar(e.Y, e.X, goncurses.Char('X'|mod))
 	case api.TypePlayer:
 		screen.MoveAddChar(e.Y, e.X, '*')
 	case api.TypeMonster:
