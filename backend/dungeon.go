@@ -62,7 +62,9 @@ func (mgr *gameManager) GetState() (g *GameState) {
 func (mgr *gameManager) pushUpdate() {
 	update := api.WorldUpdate{}
 	update.Entities = []api.EntityData{}
-	for _, entity := range mgr.state.Entities {
+	visibleEntities := getVisible(&mgr.state.Player.Entity, mgr.state.Entities, 10)
+	visibleEntities = append(visibleEntities, &mgr.state.Player.Entity)
+	for _, entity := range visibleEntities {
 		log.Printf("Entity %#v", entity)
 		update.Entities = append(update.Entities, *entity.Data())
 	}
