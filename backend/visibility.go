@@ -72,24 +72,27 @@ func addShadow(row, col int, shadows []lineShadow) []lineShadow {
 
 	// Assuming shadows are already ordered by start, and non-overlapping.
 	// Find correct place to insert.
+	inserted := false
 	for ix, s := range shadows {
-		if s.start <= this.start {
+		if s.start > this.start {
 			// Insert in order.
 			log.Printf("Inserting at position %v", ix)
 			shadows = append(shadows, this)
-			copy(shadows[ix+2:], shadows[ix+1:])
-			shadows[ix+1] = this
+			copy(shadows[ix+1:], shadows[ix:])
+			shadows[ix] = this
+			inserted = true
 			break
 		}
 	}
 
-	if len(shadows) == 0 {
-		log.Printf("This is the first shadow")
+	if !inserted {
+		log.Printf("Inserting at end")
 		shadows = append(shadows, this)
 	}
 
 	// Merge any overlapping.
 	newShadows := make([]lineShadow, 0, len(shadows))
+	log.Printf("Shadows before merging: %v", shadows)
 	for _, s := range shadows {
 		if len(newShadows) == 0 {
 			newShadows = append(newShadows, s)
@@ -97,11 +100,14 @@ func addShadow(row, col int, shadows []lineShadow) []lineShadow {
 		}
 
 		if s.start <= newShadows[len(newShadows)-1].end {
+			log.Printf("Merge %v and %v", newShadows[len(newShadows)-1], s)
 			newShadows[len(newShadows)-1].end = s.end
+			log.Printf("Became %v", newShadows[len(newShadows)-1])
 		} else {
 			newShadows = append(newShadows, s)
 		}
 	}
+	log.Printf("Shadows after merging: %v", newShadows)
 
 	return newShadows
 }

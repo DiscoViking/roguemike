@@ -166,6 +166,20 @@ func TestVisibility(t *testing.T) {
 			viewDistance: 5,
 			visibleIds:   []uint64{9, 10, 11, 12, 13, 14, 15, 16},
 		},
+		{
+			name: "Test combining shadows from multiple walls",
+			entities: []*Entity{
+				dummyEntity(5, 5, 0),
+				dummyEntity(4, 6, 1),
+				dummyEntity(5, 7, 2),
+				dummyEntity(5, 8, 3),
+				dummyEntity(5, 9, 4),
+				dummyEntity(5, 10, 5),
+			},
+			myId:         0,
+			viewDistance: 5,
+			visibleIds:   []uint64{1, 2},
+		},
 	}
 
 	for ix, test := range tests {
