@@ -4,6 +4,9 @@ import (
 	"log"
 )
 
+// 2D Tile visibility calculations
+// Algorithm taken from http://journal.stuffwithstuff.com/2015/09/07/what-the-hero-sees/
+
 func transformOctant(row, col, oct int) (int, int) {
 	switch oct {
 	case 0:
