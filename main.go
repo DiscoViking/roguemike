@@ -21,13 +21,10 @@ func main() {
 	eventsManager := events.NewManager()
 	game := backend.NewGameManager(eventsManager)
 
-	e := &backend.Entity{
-		api.Coords{5, 5},
-		0,
-		api.TypeWall,
+	entities := backend.GenerateNatural(100, 50, 50)
+	for _, e := range entities {
+		game.Spawn(e)
 	}
-	e.Init()
-	game.Spawn(e)
 
 	// Begin frontend loop.
 	curses.Init(eventsManager)
