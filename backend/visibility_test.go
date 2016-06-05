@@ -122,6 +122,50 @@ func TestVisibility(t *testing.T) {
 			viewDistance: 5,
 			visibleIds:   []uint64{},
 		},
+		{
+			name: "Can see in all octants",
+			entities: []*Entity{
+				dummyEntity(0, 0, 0),
+				dummyEntity(1, 3, 1),
+				dummyEntity(3, 1, 2),
+				dummyEntity(3, -1, 3),
+				dummyEntity(1, -3, 4),
+				dummyEntity(-1, -3, 5),
+				dummyEntity(-3, -1, 6),
+				dummyEntity(-3, 1, 7),
+				dummyEntity(-1, 3, 8),
+			},
+			myId:         0,
+			viewDistance: 5,
+			visibleIds:   []uint64{1, 2, 3, 4, 5, 6, 7, 8},
+		},
+		{
+			name: "Basic occlusion test in all octants",
+			entities: []*Entity{
+				dummyEntity(0, 0, 0),
+				dummyEntity(1, 3, 1),
+				dummyEntity(3, 1, 2),
+				dummyEntity(3, -1, 3),
+				dummyEntity(1, -3, 4),
+				dummyEntity(-1, -3, 5),
+				dummyEntity(-3, -1, 6),
+				dummyEntity(-3, 1, 7),
+				dummyEntity(-1, 3, 8),
+
+				// These block all others from being visible.
+				dummyEntity(0, 1, 9),
+				dummyEntity(1, 1, 10),
+				dummyEntity(1, 0, 11),
+				dummyEntity(1, -1, 12),
+				dummyEntity(0, -1, 13),
+				dummyEntity(-1, -1, 14),
+				dummyEntity(-1, 0, 15),
+				dummyEntity(-1, 1, 16),
+			},
+			myId:         0,
+			viewDistance: 5,
+			visibleIds:   []uint64{9, 10, 11, 12, 13, 14, 15, 16},
+		},
 	}
 
 	for ix, test := range tests {

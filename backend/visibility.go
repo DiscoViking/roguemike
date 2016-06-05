@@ -4,11 +4,36 @@ import (
 	"log"
 )
 
+func transformOctant(row, col, oct int) (int, int) {
+	switch oct {
+	case 0:
+		row, col = row, col
+	case 1:
+		row, col = col, row
+	case 2:
+		row, col = -col, row
+	case 3:
+		row, col = -row, col
+	case 4:
+		row, col = -row, -col
+	case 5:
+		row, col = -col, -row
+	case 6:
+		row, col = col, -row
+	case 7:
+		row, col = row, -col
+	}
+
+	return row, col
+}
+
 // Calculate which entities a given entity can see.
 func getVisible(source *Entity, targets []*Entity, viewDistance int) []*Entity {
 	visible := make([]*Entity, 0, len(targets))
 
-	visible = append(visible, visibleOct(source, targets, viewDistance)...)
+	for oct := 0; oct < 8; oct++ {
+		visible = append(visible, visibleOct(source, targets, viewDistance, oct)...)
+	}
 
 	return visible
 }
@@ -81,7 +106,7 @@ func addShadow(row, col int, shadows []lineShadow) []lineShadow {
 	return newShadows
 }
 
-func visibleOct(source *Entity, targets []*Entity, viewDistance int) []*Entity {
+func visibleOct(source *Entity, targets []*Entity, viewDistance int, oct int) []*Entity {
 	visible := make([]*Entity, 0, len(targets))
 	X := source.X
 	Y := source.Y
@@ -106,7 +131,8 @@ func visibleOct(source *Entity, targets []*Entity, viewDistance int) []*Entity {
 
 			// If so, check if there's an entity there.
 			// If so, add it to the visible list and recalculate using its shadow.
-			if e := getTile(X+col, Y+row, targets); e != nil {
+			transRow, transCol := transformOctant(row, col, oct)
+			if e := getTile(X+transCol, Y+transRow, targets); e != nil {
 				visible = append(visible, e)
 				shadows = addShadow(row, col, shadows)
 				log.Printf("New shadows: %v", shadows)
