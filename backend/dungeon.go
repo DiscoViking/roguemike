@@ -1,15 +1,16 @@
 package backend
 
 import (
+	"github.com/discoviking/roguemike/api"
+	"github.com/discoviking/roguemike/events"
 	"log"
-    "github.com/discoviking/roguemike/api"
-    "github.com/discoviking/roguemike/events"
 )
 
 type GameManager interface {
 	Tick()
-    Loop()
+	Loop()
 	GetState() (g *GameState)
+	Spawn(e *Entity)
 }
 
 type GameState struct {
@@ -24,13 +25,19 @@ func NewGameManager(eventsManager *events.Manager) GameManager {
 	mgr.state.Player = NewPlayer(eventsManager)
 	mgr.state.Entities = []*Entity{&mgr.state.Player.Entity}
 	mgr.state.Actors = []*Actor{mgr.state.Player}
-    mgr.eventsManager = eventsManager
+	mgr.eventsManager = eventsManager
 	return &mgr
 }
 
 type gameManager struct {
-	state *GameState
-    eventsManager *events.Manager
+	state         *GameState
+	eventsManager *events.Manager
+}
+
+// Can't currently spawn actors.  Only entities.  This needs to be fixed,
+// probably by making entity an interface.
+func (mgr *gameManager) Spawn(e *Entity) {
+	mgr.state.Entities = append(mgr.state.Entities, e)
 }
 
 func (mgr *gameManager) Tick() {
@@ -39,13 +46,13 @@ func (mgr *gameManager) Tick() {
 		action.apply(actor, mgr.state)
 	}
 
-    mgr.pushUpdate()
+	mgr.pushUpdate()
 }
 
 func (mgr *gameManager) Loop() {
-    for {
-        mgr.Tick()
-    }
+	for {
+		mgr.Tick()
+	}
 }
 
 func (mgr *gameManager) GetState() (g *GameState) {
@@ -53,22 +60,22 @@ func (mgr *gameManager) GetState() (g *GameState) {
 }
 
 func (mgr *gameManager) pushUpdate() {
-    update := api.WorldUpdate{}
+	update := api.WorldUpdate{}
 	update.Entities = []api.EntityData{}
 	for _, entity := range mgr.state.Entities {
 		log.Printf("Entity %#v", entity)
-        update.Entities = append(update.Entities, *entity.Data())
+		update.Entities = append(update.Entities, *entity.Data())
 	}
 
-    mgr.eventsManager.Publish(update)
+	mgr.eventsManager.Publish(update)
 }
 
 func (state *GameState) IsTraversable(position api.Coords) bool {
-    for _, entity := range state.Entities {
-        if (entity.X == position.X && entity.Y == position.Y) {
-            return false
-        }
-    }
+	for _, entity := range state.Entities {
+		if entity.X == position.X && entity.Y == position.Y {
+			return false
+		}
+	}
 
-    return true
+	return true
 }
