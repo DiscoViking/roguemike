@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"os"
 
 	"github.com/discoviking/roguemike/api"
@@ -21,13 +22,15 @@ func main() {
 	eventsManager := events.NewManager()
 	game := backend.NewGameManager(eventsManager)
 
-	e := &backend.Entity{
-		api.Coords{5, 5},
-		0,
-		api.TypeWall,
+	for i := 0; i < 100; i++ {
+		e := &backend.Entity{
+			api.Coords{rand.Intn(50), rand.Intn(50)},
+			0,
+			api.TypeWall,
+		}
+		e.Init()
+		game.Spawn(e)
 	}
-	e.Init()
-	game.Spawn(e)
 
 	// Begin frontend loop.
 	curses.Init(eventsManager)
