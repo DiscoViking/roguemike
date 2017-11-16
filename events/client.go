@@ -13,13 +13,7 @@ type Client struct {
 	broker   Broker
 }
 
-type HandlerFunc func(e Event)
-
-func (f HandlerFunc) Handle(e Event) {
-	f(e)
-}
-
-func NewClient(b Broker) *Client {
+func NewClient(b Broker) Broker {
 	return &Client{
 		c:        make(chan Event, CLIENT_EVENT_BUFFER_SIZE),
 		handlers: make(map[Type]Handler, 0),
@@ -41,7 +35,7 @@ func (c *Client) Subscribe(t Type, h Handler) {
 	c.broker.Subscribe(t, c)
 }
 
-func (c *Client) Emit(e Event) {
+func (c *Client) Publish(e Event) {
 	c.broker.Publish(e)
 }
 

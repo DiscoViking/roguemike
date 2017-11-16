@@ -5,29 +5,6 @@ import (
 	"sync"
 )
 
-type Type int
-
-type Event interface {
-	Type() Type
-}
-
-type Handler interface {
-	Handle(e Event)
-}
-
-type Subscribable interface {
-	Subscribe(t Type, h Handler)
-}
-
-type Publisher interface {
-	Publish(e Event)
-}
-
-type Broker interface {
-	Subscribable
-	Publisher
-}
-
 type broker struct {
 	sync.RWMutex
 	subscribers map[Type][]Handler
