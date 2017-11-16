@@ -1,7 +1,7 @@
 package backend
 
-import "github.com/discoviking/roguemike/api"
-import "github.com/discoviking/roguemike/events"
+import "github.com/DiscoViking/roguemike/api"
+import "github.com/DiscoViking/roguemike/events"
 
 type InputBrain struct {
 	input chan Action

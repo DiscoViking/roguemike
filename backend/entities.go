@@ -3,7 +3,7 @@ package backend
 import (
 	"sync"
 
-	"github.com/discoviking/roguemike/api"
+	"github.com/DiscoViking/roguemike/api"
 )
 
 var globalIdStore idStore

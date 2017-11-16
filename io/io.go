@@ -1,7 +1,7 @@
 package io
 
-import "github.com/discoviking/roguemike/api"
-import "github.com/discoviking/roguemike/backend"
+import "github.com/DiscoViking/roguemike/api"
+import "github.com/DiscoViking/roguemike/backend"
 
 type Manager struct {
 	output chan<- *api.UpdateBundle

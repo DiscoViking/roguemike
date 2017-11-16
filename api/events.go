@@ -1,6 +1,6 @@
 package api
 
-import "github.com/discoviking/roguemike/events"
+import "github.com/DiscoViking/roguemike/events"
 
 // Event Types
 const (

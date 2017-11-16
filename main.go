@@ -4,10 +4,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/discoviking/roguemike/api"
-	"github.com/discoviking/roguemike/backend"
-	"github.com/discoviking/roguemike/events"
-	"github.com/discoviking/roguemike/io/curses"
+	"github.com/DiscoViking/roguemike/api"
+	"github.com/DiscoViking/roguemike/backend"
+	"github.com/DiscoViking/roguemike/events"
+	"github.com/DiscoViking/roguemike/io/curses"
 )
 
 func main() {
