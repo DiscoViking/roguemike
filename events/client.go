@@ -13,9 +13,9 @@ type Client struct {
 	broker   Broker
 }
 
-type HandleFunc func(e Event)
+type HandlerFunc func(e Event)
 
-func (f HandleFunc) Handle(e Event) {
+func (f HandlerFunc) Handle(e Event) {
 	f(e)
 }
 

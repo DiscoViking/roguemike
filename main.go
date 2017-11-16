@@ -18,8 +18,8 @@ func main() {
 	defer logFile.Close()
 	log.SetOutput(logFile)
 
-	eventsManager := events.NewManager()
-	game := backend.NewGameManager(eventsManager)
+	broker := events.NewBroker()
+	game := backend.NewGameManager(broker)
 
 	e := &backend.Entity{
 		api.Coords{5, 5},
@@ -30,7 +30,7 @@ func main() {
 	game.Spawn(e)
 
 	// Begin frontend loop.
-	curses.Init(eventsManager)
+	curses.Init(broker)
 	defer curses.Term()
 
 	// Begin backend loop.
@@ -38,8 +38,8 @@ func main() {
 
 	// Block until a 'quit' event is sent.
 	quit := make(chan bool, 1)
-	eventsManager.Subscribe(api.EventQuit, func(e events.Event) {
+	broker.Subscribe(api.EventQuit, events.HandlerFunc(func(e events.Event) {
 		quit <- true
-	})
+	}))
 	<-quit
 }

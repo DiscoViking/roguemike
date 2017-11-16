@@ -12,7 +12,7 @@ import (
 
 var screen *goncurses.Window
 
-func Init(eventManager *events.Manager) error {
+func Init(broker events.Broker) error {
 	s, err := goncurses.Init()
 	screen = s
 	if err != nil {
@@ -24,8 +24,8 @@ func Init(eventManager *events.Manager) error {
 	goncurses.Cursor(0)
 	screen.Keypad(true)
 
-	createEventSubscriptions(eventManager)
-	go handleInput(eventManager)
+	createEventSubscriptions(broker)
+	go handleInput(broker)
 
 	return nil
 }
@@ -44,29 +44,29 @@ func output(u *api.WorldUpdate) {
 	refresh()
 }
 
-func createEventSubscriptions(eventManager *events.Manager) {
-	eventManager.Subscribe(
+func createEventSubscriptions(broker events.Broker) {
+	broker.Subscribe(
 		api.EventWorldUpdate,
-		events.Handler(func(e events.Event) {
+		events.HandlerFunc(func(e events.Event) {
 			update := e.(api.WorldUpdate)
 			output(&update)
 		}))
 }
 
-func handleInput(eventManager *events.Manager) {
+func handleInput(broker events.Broker) {
 	for {
 		c := screen.GetChar()
 		switch c {
 		case 'w', goncurses.KEY_UP:
-			eventManager.Publish(api.MoveIntent{X: 0, Y: -1})
+			broker.Publish(api.MoveIntent{X: 0, Y: -1})
 		case 'a', goncurses.KEY_LEFT:
-			eventManager.Publish(api.MoveIntent{X: -1, Y: 0})
+			broker.Publish(api.MoveIntent{X: -1, Y: 0})
 		case 'd', goncurses.KEY_RIGHT:
-			eventManager.Publish(api.MoveIntent{X: 1, Y: 0})
+			broker.Publish(api.MoveIntent{X: 1, Y: 0})
 		case 's', goncurses.KEY_DOWN:
-			eventManager.Publish(api.MoveIntent{X: 0, Y: 1})
+			broker.Publish(api.MoveIntent{X: 0, Y: 1})
 		case 'q':
-			eventManager.Publish(api.Quit{})
+			broker.Publish(api.Quit{})
 		}
 	}
 }
