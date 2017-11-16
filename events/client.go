@@ -1,6 +1,9 @@
 package events
 
-import "sync"
+import (
+	"log"
+	"sync"
+)
 
 const (
 	CLIENT_EVENT_BUFFER_SIZE = 10
@@ -14,14 +17,16 @@ type client struct {
 }
 
 func NewClient(b Broker) Client {
-	return &client{
+	c := &client{
 		c:        make(chan Event, CLIENT_EVENT_BUFFER_SIZE),
 		handlers: make(map[Type]Handler, 0),
 		broker:   b,
 	}
+	go c.listenForever()
+	return c
 }
 
-func (c *client) ListenForever() {
+func (c *client) listenForever() {
 	for e := range c.c {
 		c.handleInternal(e)
 	}
@@ -44,12 +49,15 @@ func (c *client) Handle(e Event) {
 }
 
 func (c *client) handleInternal(e Event) {
-	c.RLock()
-	defer c.RUnlock()
-
 	t := e.Type()
+	log.Printf("Received event of type %v", t)
 
-	if h, ok := c.handlers[t]; ok {
-		h.Handle(e)
+	c.RLock()
+	h, ok := c.handlers[t]
+	c.RUnlock()
+
+	if !ok {
+		log.Fatalf("Didn't have a handler for event!")
 	}
+	h.Handle(e)
 }
