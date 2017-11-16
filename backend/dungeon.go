@@ -1,9 +1,10 @@
 package backend
 
 import (
-	"github.com/discoviking/roguemike/api"
-	"github.com/discoviking/roguemike/events"
 	"log"
+
+	"github.com/DiscoViking/roguemike/api"
+	"github.com/DiscoViking/roguemike/events"
 )
 
 type GameManager interface {
@@ -19,19 +20,19 @@ type GameState struct {
 	Player   *Actor
 }
 
-func NewGameManager(eventsManager *events.Manager) GameManager {
+func NewGameManager(broker events.Broker) GameManager {
 	mgr := gameManager{}
 	mgr.state = &GameState{}
-	mgr.state.Player = NewPlayer(eventsManager)
+	mgr.state.Player = NewPlayer(broker)
 	mgr.state.Entities = []*Entity{&mgr.state.Player.Entity}
 	mgr.state.Actors = []*Actor{mgr.state.Player}
-	mgr.eventsManager = eventsManager
+	mgr.broker = broker
 	return &mgr
 }
 
 type gameManager struct {
-	state         *GameState
-	eventsManager *events.Manager
+	state  *GameState
+	broker events.Broker
 }
 
 // Can't currently spawn actors.  Only entities.  This needs to be fixed,
@@ -67,7 +68,7 @@ func (mgr *gameManager) pushUpdate() {
 		update.Entities = append(update.Entities, *entity.Data())
 	}
 
-	mgr.eventsManager.Publish(update)
+	mgr.broker.Publish(update)
 }
 
 func (state *GameState) IsTraversable(position api.Coords) bool {

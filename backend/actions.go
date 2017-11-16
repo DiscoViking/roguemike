@@ -1,6 +1,6 @@
 package backend
 
-import "github.com/discoviking/roguemike/api"
+import "github.com/DiscoViking/roguemike/api"
 
 type Action interface {
 	apply(actor *Actor, state *GameState)
