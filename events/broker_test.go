@@ -4,27 +4,6 @@ import (
 	"testing"
 )
 
-const (
-	DUMMY_EVENT_1 Type = iota
-	DUMMY_EVENT_2
-)
-
-type dummyEvent struct {
-	t Type
-}
-
-func (e dummyEvent) Type() Type {
-	return e.t
-}
-
-type countingHandler struct {
-	count int
-}
-
-func (h *countingHandler) Handle(e Event) {
-	h.count += 1
-}
-
 func TestNewBroker(t *testing.T) {
 	_ = NewBroker()
 }
