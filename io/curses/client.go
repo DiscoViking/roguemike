@@ -66,7 +66,7 @@ func handleInput(broker events.Broker) {
 		case 's', goncurses.KEY_DOWN:
 			broker.Publish(api.MoveIntent{X: 0, Y: 1})
 		case 'q':
-			broker.Publish(api.Quit{})
+			broker.Publish(api.Quit)
 		}
 	}
 }
