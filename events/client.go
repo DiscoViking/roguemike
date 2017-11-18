@@ -14,6 +14,7 @@ type client struct {
 	c        chan Event
 	handlers map[Type]Handler
 	broker   Broker
+	seq      int64
 }
 
 func NewClient(b Broker) Client {
@@ -21,6 +22,7 @@ func NewClient(b Broker) Client {
 		c:        make(chan Event, CLIENT_EVENT_BUFFER_SIZE),
 		handlers: make(map[Type]Handler, 0),
 		broker:   b,
+		seq:      0,
 	}
 	go c.listenForever()
 	return c
@@ -44,7 +46,11 @@ func (c *client) Publish(e Event) {
 	c.broker.Publish(e)
 }
 
-func (c *client) Handle(e Event) {
+func (c *client) handle(e taggedEvent) {
+	if e.seq <= c.seq {
+		panic("Events received in unexpected order")
+	}
+	c.seq = e.seq
 	c.c <- e
 }
 
